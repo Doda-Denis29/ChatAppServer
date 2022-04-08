@@ -25,7 +25,7 @@ void runApp(SOCKET s, fd_set m)
 				SOCKET client = accept(s, nullptr, nullptr);
 				FD_SET(client, &m);
 				const char* wMessage = "Hello to the server";
-				send(newS, wMessage, 24, 0);
+				send(newS, wMessage, 21, 0);
 			}
 			else
 			{
@@ -46,6 +46,10 @@ void runApp(SOCKET s, fd_set m)
 						{
 							run = false;
 							break;
+						}
+						else if (commandControl == "\\hello")
+						{
+							//send(newS,)
 						}
 						continue; // Maybe add more commands in the future
 					}
