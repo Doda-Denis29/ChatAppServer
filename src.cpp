@@ -62,10 +62,28 @@ void runApp(SOCKET s, fd_set m)
 						{
 							oss << "USER_" << newS << ": " << buf << "\r\n";
 						}
+						else
+						{
+							oss << "USER_" << newS << "(me): " << buf << "\r\n";
+						}
+						std::string sOut = oss.str();
+						send(newOutS, sOut.c_str(), sOut.size() + 1, 0);
 					}
 				}
 			}
 		}
+	} //End while
+}//End function
+
+void endApp(fd_set m)
+{
+	const char* endMessage = "SERVER : Server is shutting down ... Goodbye\r\n";
+	while (m.fd_count > 0)
+	{
+		SOCKET s = m.fd_array[0];
+		send(s, endMessage, 48, 0);
+		FD_CLR(s, &m);
+		closesocket(s);
 	}
 }
 
@@ -99,4 +117,13 @@ int main()
 	FD_ZERO(&master);
 
 	FD_SET(listening, &master);
+
+	runApp(listening, master);
+
+	FD_CLR(listening, &master);
+	closesocket(listening);
+
+	endApp(master);
+
+	WSACleanup();
 }
