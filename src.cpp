@@ -13,9 +13,6 @@ void setUpBind(sockaddr_in& someStruct, int PORT)
 void runApp(SOCKET s, fd_set m)
 {
 	bool run = true;
-	const char* wMessage = "Connected to the server";
-	std::string commandControl{};
-	std::ostringstream oss{};
 	while (run)
 	{
 		fd_set cpy = m;
@@ -27,6 +24,7 @@ void runApp(SOCKET s, fd_set m)
 			{
 				SOCKET client = accept(s, nullptr, nullptr);
 				FD_SET(client, &m);
+				const char* wMessage = "Hello to the server";
 				send(newS, wMessage, 24, 0);
 			}
 			else
@@ -43,7 +41,7 @@ void runApp(SOCKET s, fd_set m)
 				{
 					if (buf[0] == '\\')
 					{
-						commandControl = std::string(buf, bytes);
+						std::string commandControl = std::string(buf, bytes);
 						if (commandControl == "\\quit")
 						{
 							run = false;
@@ -53,6 +51,7 @@ void runApp(SOCKET s, fd_set m)
 					}
 					for (std::size_t j = 0; j < m.fd_count; j++)
 					{
+						std::ostringstream oss;
 						SOCKET newOutS = m.fd_array[j];
 						if (newOutS == s)
 						{
